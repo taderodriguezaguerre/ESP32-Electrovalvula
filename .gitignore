@@ -1,0 +1,9 @@
+# Ignorar credenciales en cualquier subcarpeta
+**/credenciales.h
+
+# Ignorar carpetas de compilación local del IDE
+/build/
+/build-bin/
+
+# Archivos temporales generados por Arduino IDE 2.x
+.build/
