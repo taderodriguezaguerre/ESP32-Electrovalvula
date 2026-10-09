@@ -1,27 +1,36 @@
-const int pinEntradaESP = 2;
-const int pinRele = 3;
-const int ledInterno = 13; 
+const int pinEntradaESP = 6;
+const int pinRele = 7;
+const int ledInterno = 13;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(pinEntradaESP, INPUT); // CRÍTICO: INPUT normal, no INPUT_PULLUP
-  pinMode(pinRele, OUTPUT);
+
+  pinMode(pinEntradaESP, INPUT);
   pinMode(ledInterno, OUTPUT);
-  
-  // La mayoría de los relés de 5V se activan con LOW. 
-  // Iniciamos apagándolo.
-  digitalWrite(pinRele, HIGH); 
+
+  // Primero establecemos el estado de reposo del relé.
+  // HIGH = relé apagado (módulo Active LOW).
+  digitalWrite(pinRele, HIGH);
+  pinMode(pinRele, OUTPUT);
+
+  // LED interno apagado al iniciar.
+  digitalWrite(ledInterno, LOW);
+
+  Serial.println("Arduino Mega iniciado");
 }
 
 void loop() {
   int estadoESP = digitalRead(pinEntradaESP);
-  
+
   if (estadoESP == HIGH) {
-    digitalWrite(ledInterno, HIGH); // Prende LED interno
-    digitalWrite(pinRele, LOW);     // Activa el relé (lógica inversa)
-    Serial.println("Señal recibida: ON");
+    // El ESP32 solicita activar la electroválvula.
+    digitalWrite(ledInterno, HIGH);
+    digitalWrite(pinRele, LOW);
+
+    Serial.println("Senal recibida: ON");
   } else {
-    digitalWrite(ledInterno, LOW);  // Apaga LED interno
-    digitalWrite(pinRele, HIGH);    // Desactiva el relé
+    // El ESP32 solicita desactivar la electroválvula.
+    digitalWrite(ledInterno, LOW);
+    digitalWrite(pinRele, HIGH);
   }
 }

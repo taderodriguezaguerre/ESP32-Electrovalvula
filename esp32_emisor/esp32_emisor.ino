@@ -102,44 +102,52 @@ const char pagina_html[] PROGMEM = R"rawliteral(
 
 void setup() {
   Serial.begin(115200);
-  
-  pinMode(pinSalidaArduino, OUTPUT);
-  pinMode(ledInterno, OUTPUT);
-  
-  // Estado inicial seguro
+
+  // Establecer el estado inicial antes de configurar la salida.
   digitalWrite(pinSalidaArduino, LOW);
+  pinMode(pinSalidaArduino, OUTPUT);
+
   digitalWrite(ledInterno, LOW);
+  pinMode(ledInterno, OUTPUT);
 
   // Conexión WiFi
   WiFi.begin(ssid, password);
   Serial.print("Conectando a WiFi");
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  
-  Serial.println("");
-  Serial.println("Conexión exitosa.");
+
+  Serial.println();
+  Serial.println("Conexion exitosa.");
   Serial.print("Ingresá esta IP en tu navegador: ");
   Serial.println(WiFi.localIP());
 
-  // Endpoint que sirve la página web al entrar a la IP
+  // Página principal
   server.on("/", HTTP_GET, []() {
     server.send(200, "text/html", pagina_html);
   });
 
-  // Endpoints de control
+  // Encender válvula
   server.on("/api/on", HTTP_GET, []() {
     digitalWrite(pinSalidaArduino, HIGH);
     digitalWrite(ledInterno, HIGH);
-    server.send(200, "application/json", "{\"estado\": \"ON\"}");
+
+    server.send(200, "application/json",
+                "{\"estado\":\"ON\"}");
+
     Serial.println("Comando: ON");
   });
 
+  // Apagar válvula
   server.on("/api/off", HTTP_GET, []() {
     digitalWrite(pinSalidaArduino, LOW);
     digitalWrite(ledInterno, LOW);
-    server.send(200, "application/json", "{\"estado\": \"OFF\"}");
+
+    server.send(200, "application/json",
+                "{\"estado\":\"OFF\"}");
+
     Serial.println("Comando: OFF");
   });
 
